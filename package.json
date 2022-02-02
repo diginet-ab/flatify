@@ -4,7 +4,7 @@
   "description": "",
   "main": "./build/cli.js",
   "bin": {
-    "flatify": "./build/index.js"
+    "flatify": "./build/cli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
