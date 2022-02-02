@@ -41,7 +41,7 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath
             await fsp.copyFile(file, dest)
     }
     const localFiles = files.map(file => {
-        return file.substring(sourcePath.length + 1).replaceAll('\\', '/')
+        return file.replaceAll('\\', '/')
     })
     await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify(localFiles, undefined, 2))
 }
