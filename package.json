@@ -2,7 +2,7 @@
   "name": "@diginet/flatify",
   "version": "1.0.3",
   "description": "",
-  "main": "cli.js",
+  "main": "./build/cli.js",
   "bin": {
     "flatify": "./build/index.js"
   },
