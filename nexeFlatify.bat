@@ -1,1 +1,1 @@
-pkg -d -t node16-win-x64 .\build\cli.js
+nexe build/cli.js --target windows-x86-14.9.0 -o flatify.exe
