@@ -3,6 +3,7 @@
 import fsp from "fs/promises"
 import path from "path"
 import { program } from 'commander'
+import 'ts-replace-all'
 
 type Options = {
     base: string
@@ -12,14 +13,14 @@ type Options = {
     test: boolean
 }
 
-const getAllFiles = async (dirPath: string, aArrayOfFiles: string[]) => {
-    const files = await fsp.readdir(dirPath)
+const getAllFiles = async (sourceDirPath: string, destDirPath: string = '', aArrayOfFiles: string[] = []) => {
+    const files = await fsp.readdir(sourceDirPath)
     let arrayOfFiles = aArrayOfFiles || []
     for (const file of files) {
-        if ((await fsp.stat(dirPath + "/" + file)).isDirectory()) {
-            arrayOfFiles = await getAllFiles(dirPath + "/" + file, arrayOfFiles)
+        if ((await fsp.stat(sourceDirPath + "/" + file)).isDirectory()) {
+            arrayOfFiles = await getAllFiles(sourceDirPath + "/" + file, (destDirPath ? destDirPath + "/" : '') + file, arrayOfFiles)
         } else {
-            arrayOfFiles.push(path.join(dirPath, "/", file))
+            arrayOfFiles.push((destDirPath ? destDirPath + "/" : '') + file)
         }
     }
     return arrayOfFiles
@@ -27,8 +28,7 @@ const getAllFiles = async (dirPath: string, aArrayOfFiles: string[]) => {
 
 export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath: string, options: Options) => {
     await fsp.mkdir(destPath, { recursive: true })
-    const files = await getAllFiles(sourcePath, [])
-    console.log(files)
+    const files = await getAllFiles(sourcePath, '')
     for (const [index, file] of files.entries()) {
         const dest = `${destPath}\\${ options.base }${index.toString()}${ options.extension }`
         if (options.debug || options.test) {
@@ -38,12 +38,12 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath
                 console.log(`Would copy ${ file } to ${ dest }`)
         }
         if (!options.test)
-            await fsp.copyFile(file, dest)
+            await fsp.copyFile(sourcePath + '/' + file, dest)
     }
     const localFiles = files.map(file => {
         return file.replaceAll('\\', '/')
     })
-    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify(localFiles, undefined, 2))
+    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify({ files: localFiles, date: (new Date()).toISOString() }, undefined, 2))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

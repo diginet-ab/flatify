@@ -1,0 +1,1 @@
+pkg -d -t node16-win-x64 .\build\cli.js
