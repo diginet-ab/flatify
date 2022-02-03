@@ -45,7 +45,7 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath
     })
     const modifiedTime = new Date()
     const modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString()
-    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify({ files: localFiles, date: modifiedTime }, undefined, 2))
+    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify({ files: localFiles, date: modifiedTimeString }, undefined, 2))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
