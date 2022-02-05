@@ -17,5 +17,6 @@
     "commander": "^9.0.0",
     "read-package-json": "^4.1.1",
     "ts-replace-all": "^1.0.0"
-  }
+  },
+  "resourceFiles": [ "package.json" ]
 }

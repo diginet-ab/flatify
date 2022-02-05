@@ -4,7 +4,6 @@ import fs from 'fs'
 import fsp from "fs/promises"
 import { program } from 'commander'
 import 'ts-replace-all'
-import readJson from 'read-package-json'
 
 type Options = {
     base: string
@@ -57,36 +56,33 @@ const sprintf = (strings: TemplateStringsArray, ...indices: number[]) => {
         )
 }
 
-const getVersion = async (): Promise<string> => {
-    let packageJsonName = ""
-    if (fs.existsSync('./package.json'))
-        packageJsonName = './package.json'
-    else
-        packageJsonName = '../package.json'
-    const p = new Promise<string>((resolve, reject) => {
-        readJson(packageJsonName, undefined, false, (er: any, data: any) => {
-            if (!er)
-                resolve(data.version as string)
-            else
-                reject(er)
-        })
-    })
-    return p
+const getVersion = async () => {
+    let packageJson: { version?: string } = {}
+    let json = ''
+    try {
+        json = fs.readFileSync('package.json', { encoding: 'utf-8'})
+    } catch {
+        json = fs.readFileSync('../package.json', { encoding: 'utf-8'})
+    }
+    packageJson = JSON.parse(json)
+    return packageJson.version
 }
 
 const main = async () => {
     const defaultSource = './'
     const defaultTarget = './output'
 
-    let version = "?"
+    let version = ''
     try {
-        version = await getVersion()
+        let ver = await getVersion()
+        if (ver)
+            version = ver
     } catch {
     }
     program
         .name('flatify')
         .description('CLI to flatten a source folder with hierarchical folder structure to a flat list of numbered files in a target folder. A JSON file is also output containing an array of the original names.')
-        .version('0.0.0')
+        .version(version)
         .option('-b, --base <name>', 'Flat file base name', 'file')
         .option('-e, --extension <ext>', 'Flat file extension', '.bin')
         .option('-j, --json <name>', 'JSON file name', 'files.json')
@@ -97,7 +93,6 @@ const main = async () => {
         .action(async (source, target, options: Options, command) => {
             await copyWebBuildFilesToFlatFolder(source, target, options)
         })
-        .version(version)
 
     program.parse()
 
