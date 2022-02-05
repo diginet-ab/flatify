@@ -1,7 +1,7 @@
 {
   "name": "@diginet/flatify",
   "version": "1.0.11",
-  "description": "",
+  "description": "CLI to flatten a source folder with hierarchical folder structure to a flat list of numbered files in a target folder. A JSON file is also output containing an array of the original names.",
   "main": "./build/cli.js",
   "bin": {
     "flatify": "./build/cli.js"
@@ -15,6 +15,7 @@
   "dependencies": {
     "@types/node": "^17.0.14",
     "commander": "^9.0.0",
+    "read-package-json": "^4.1.1",
     "ts-replace-all": "^1.0.0"
   }
 }
