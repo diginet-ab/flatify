@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import fs from 'fs'
 import fsp from "fs/promises"
 import { program } from 'commander'
 import 'ts-replace-all'
@@ -56,9 +57,14 @@ const sprintf = (strings: TemplateStringsArray, ...indices: number[]) => {
         )
 }
 
-const getVersion = (): Promise<string> => {
+const getVersion = async (): Promise<string> => {
+    let packageJsonName = ""
+    if (fs.existsSync('./package.json'))
+        packageJsonName = './package.json'
+    else
+        packageJsonName = '../package.json'
     const p = new Promise<string>((resolve, reject) => {
-        readJson('./package.json', undefined, false, (er: any, data: any) => {
+        readJson(packageJsonName, undefined, false, (er: any, data: any) => {
             if (!er)
                 resolve(data.version as string)
             else
