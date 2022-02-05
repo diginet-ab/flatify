@@ -60,9 +60,9 @@ const getVersion = async () => {
     let packageJson: { version?: string } = {}
     let json = ''
     try {
-        json = fs.readFileSync('package.json', { encoding: 'utf-8'})
+        json = fs.readFileSync(__dirname + '/package.json', { encoding: 'utf-8'})
     } catch {
-        json = fs.readFileSync('../package.json', { encoding: 'utf-8'})
+        json = fs.readFileSync(__dirname + '/../package.json', { encoding: 'utf-8'})
     }
     packageJson = JSON.parse(json)
     return packageJson.version
