@@ -29,23 +29,23 @@ const getAllFiles = async (sourceDirPath: string, destDirPath: string = '', aArr
 export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath: string, options: Options) => {
     await fsp.mkdir(destPath, { recursive: true })
     const files = await getAllFiles(sourcePath, '')
-    for (const [index, file] of files.entries()) {
-        const dest = `${destPath}\\${ options.base }${index.toString()}${ options.extension }`
+    const fileMap: { publicName: string, localName: string }[] = []
+    for (const [index, publicName] of files.entries()) {
+        const localName = `${ options.base }${index.toString()}${ options.extension }`
+        const destName = `${destPath}\\${ localName }`
         if (options.debug || options.test) {
             if (!options.test)
-                console.log(`Copying ${ file } to ${ dest }`)
+                console.log(`Copying ${ publicName } to ${ destName }`)
             else
-                console.log(`Would copy ${ file } to ${ dest }`)
+                console.log(`Would copy ${ publicName } to ${ destName }`)
         }
         if (!options.test)
-            await fsp.copyFile(sourcePath + '/' + file, dest)
+            await fsp.copyFile(sourcePath + '/' + publicName, destName)
+        fileMap.push({ publicName, localName })
     }
-    const localFiles = files.map(file => {
-        return file.replaceAll('\\', '/')
-    })
     const modifiedTime = new Date()
     const modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString()
-    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify({ files: localFiles, date: modifiedTimeString }, undefined, 2))
+    await fsp.writeFile(destPath + `\\${ options.json }`, JSON.stringify({ fileMap, date: modifiedTimeString }, undefined, 2))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
