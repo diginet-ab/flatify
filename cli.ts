@@ -33,9 +33,14 @@ const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', e
         if (sourcePath !== excludePath) {
             let files: { source: string, dest: string }[] = []
             const stat = await fsp.stat(sourcePath)
-            if (stat.isFile())
-                files.push({ source: sourcePath, dest: (destPath ? destPath + "/" : '') + path.basename(sourcePath) })
-            else {
+            if (stat.isFile()) {
+                let dest = ''
+                if (destPath && destPath.indexOf('.') >= 0)
+                    dest = destPath
+                else
+                    dest = (destPath ? destPath + "/" : '') + path.basename(sourcePath)
+                files.push({ source: sourcePath, dest })
+            } else {
                 const sources = await fsp.readdir(sourcePath)
                 files = sources.map(f => ({ source: sourcePath + "/" + f, dest: (destPath ? destPath + "/" : '') + f } ))
             }
