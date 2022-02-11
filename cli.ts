@@ -125,7 +125,7 @@ const main = async () => {
         .option('-n, --no', 'Display files but do not copy')
         .argument('[source...]', 'Source folders with optional target folder separated by colon (ex: ./build:www)', defaultSource)
         .action(async (source, options: Options, command) => {
-            await copyWebBuildFilesToFlatFolder(source, options.target, options)
+            await copyWebBuildFilesToFlatFolder(source.map((s: string) => s.replaceAll('\\', '/')), options.target.replaceAll('\\', '/'), options)
         })
 
     program.parse()
