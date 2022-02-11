@@ -22,13 +22,20 @@ type FileMap = {
 const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', excludePath: string, aArrayOfFiles: FileMap[] = []) => {
     let arrayOfFiles = aArrayOfFiles || []
     for (const sourceDirPath of sourceDirPaths) {
-        if (sourceDirPath !== excludePath) {
-            const files = await fsp.readdir(sourceDirPath)
+        let sourcePath = sourceDirPath
+        let destPath = destDirPath
+        if (sourceDirPath.indexOf(':') >= 0) {
+            const parts = sourceDirPath.split(':')
+            sourcePath = parts[0]
+            destPath += (destPath ? '/' : '') + parts[1]
+        }
+        if (sourcePath !== excludePath) {
+            const files = await fsp.readdir(sourcePath)
             for (const file of files) {
-                if ((await fsp.stat(sourceDirPath + "/" + file)).isDirectory()) {
-                    arrayOfFiles = await getAllFiles([sourceDirPath + "/" + file], (destDirPath ? destDirPath + "/" : '') + file, excludePath, arrayOfFiles)
+                if ((await fsp.stat(sourcePath + "/" + file)).isDirectory()) {
+                    arrayOfFiles = await getAllFiles([sourcePath + "/" + file], (destPath ? destPath + "/" : '') + file, excludePath, arrayOfFiles)
                 } else {
-                    arrayOfFiles.push({ sourceFilePath: sourceDirPath + "/" + file, filePath: (destDirPath ? destDirPath + "/" : '') + file })
+                    arrayOfFiles.push({ sourceFilePath: sourcePath + "/" + file, filePath: (destPath ? destPath + "/" : '') + file })
                 }
             }
         }
@@ -99,7 +106,7 @@ const main = async () => {
         .option('-d, --debug', 'Debug info')
         .option('-t, --target', 'Target folder', './output')
         .option('-T, --test', 'Display files but do not copy')
-        .argument('[source...]', 'source folders', defaultSource)
+        .argument('[source...]', 'Source folders with option target folder separated by colon', defaultSource)
         .action(async (source, options: Options, command) => {
             await copyWebBuildFilesToFlatFolder(source, options.target, options)
         })
