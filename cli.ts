@@ -11,7 +11,7 @@ type Options = {
     json: string
     debug: boolean
     target: string
-    test: boolean
+    no: boolean
 }
 
 type FileMap = {
@@ -50,13 +50,13 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destP
     for (const [index, map] of files.entries()) {
         const localName = `${options.base}${index.toString()}${options.extension}`
         const destName = `${destPath}/${localName}`
-        if (options.debug || options.test) {
-            if (!options.test)
-                console.log(`Copying ${map.sourceFilePath} to ${destName}`)
+        if (options.debug || options.no) {
+            if (!options.no)
+                console.log(`Copying ${map.sourceFilePath} to ${destName} as ${map.filePath}`)
             else
-                console.log(`Would copy ${map} to ${destName}`)
+                console.log(`Would copy ${map.sourceFilePath} to ${destName} as ${map.filePath}`)
         }
-        if (!options.test)
+        if (!options.no)
             await fsp.copyFile(map.sourceFilePath, destName)
         fileMap.push({ publicName: map.filePath, localName })
     }
@@ -105,8 +105,8 @@ const main = async () => {
         .option('-j, --json <name>', 'JSON file name', 'files.json')
         .option('-d, --debug', 'Debug info')
         .option('-t, --target', 'Target folder', './output')
-        .option('-T, --test', 'Display files but do not copy')
-        .argument('[source...]', 'Source folders with option target folder separated by colon', defaultSource)
+        .option('-n, --no', 'Display files but do not copy')
+        .argument('[source...]', 'Source folders with optional target folder separated by colon (ex: ./build:www)', defaultSource)
         .action(async (source, options: Options, command) => {
             await copyWebBuildFilesToFlatFolder(source, options.target, options)
         })
