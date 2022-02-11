@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\build\\cli.js",
-            "args":["--debug", "-n", "./build:cli", "../ProfCon/siox-web/build", "../ProfCon/swagger-html:swagger"],
+            "args":["--debug", "-t ./flash", "-n", "./build:cli", "../ProfCon/siox-web/build", "../ProfCon/swagger-html:swagger"],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

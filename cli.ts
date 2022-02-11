@@ -65,7 +65,13 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destP
     }
     const modifiedTime = new Date()
     const modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString()
-    await fsp.writeFile(destPath + `\\${options.json}`, JSON.stringify({ fileMap, date: modifiedTimeString }, undefined, 2))
+    const jsonFile = destPath + `\\${options.json}`
+    const jsonText = JSON.stringify({ fileMap, date: modifiedTimeString }, undefined, 2)
+    if (!options.no)
+        await fsp.writeFile(jsonFile, jsonText)
+    else {
+        console.log(`Would write ${ jsonFile }: `, jsonText)
+    }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -107,7 +113,7 @@ const main = async () => {
         .option('-e, --extension <ext>', 'Flat file extension', '.bin')
         .option('-j, --json <name>', 'JSON file name', 'files.json')
         .option('-d, --debug', 'Debug info')
-        .option('-t, --target', 'Target folder', './output')
+        .option('-t, --target <target>', 'Target folder', './output')
         .option('-n, --no', 'Display files but do not copy')
         .argument('[source...]', 'Source folders with optional target folder separated by colon (ex: ./build:www)', defaultSource)
         .action(async (source, options: Options, command) => {
