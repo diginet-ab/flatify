@@ -4,6 +4,7 @@ import fs from 'fs'
 import fsp from "fs/promises"
 import { program } from 'commander'
 import 'ts-replace-all'
+import path from 'path/posix'
 
 type Options = {
     base: string
@@ -30,12 +31,19 @@ const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', e
             destPath += (destPath ? '/' : '') + parts[1]
         }
         if (sourcePath !== excludePath) {
-            const files = await fsp.readdir(sourcePath)
+            let files: { source: string, dest: string }[] = []
+            const stat = await fsp.stat(sourcePath)
+            if (stat.isFile())
+                files.push({ source: sourcePath, dest: (destPath ? destPath + "/" : '') + path.basename(sourcePath) })
+            else {
+                const sources = await fsp.readdir(sourcePath)
+                files = sources.map(f => ({ source: sourcePath + "/" + f, dest: (destPath ? destPath + "/" : '') + f } ))
+            }
             for (const file of files) {
-                if ((await fsp.stat(sourcePath + "/" + file)).isDirectory()) {
-                    arrayOfFiles = await getAllFiles([sourcePath + "/" + file], (destPath ? destPath + "/" : '') + file, excludePath, arrayOfFiles)
+                if (!(await fsp.stat(file.source)).isFile()) {
+                    arrayOfFiles = await getAllFiles([file.source], file.dest, excludePath, arrayOfFiles)
                 } else {
-                    arrayOfFiles.push({ sourceFilePath: sourcePath + "/" + file, filePath: (destPath ? destPath + "/" : '') + file })
+                    arrayOfFiles.push({ sourceFilePath: file.source, filePath: file.dest })
                 }
             }
         }
