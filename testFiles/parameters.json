@@ -1,0 +1,46 @@
+{
+  "a": {
+    "b": {
+      "c1": {
+        "parameterNo": 792,
+        "rawMin": 0,
+        "rawMax": 32767,
+        "min": 0,
+        "max": 100,
+        "type": "LREAL",
+        "description": "Some 16-bit number...",
+        "unit": "Pa"
+      },
+      "c2": {
+        "parameterNo": 793,
+        "rawMin": 0,
+        "rawMax": 32767,
+        "min": 0,
+        "max": 100,
+        "type": "LREAL",
+        "description": "Some 16-bit number...",
+        "unit": "Pa"
+      }
+    }
+  },
+  "d": {
+    "e": {
+      "f": {
+        "parameterNo": 118,
+        "address": 21,
+        "bit": 5,
+        "type": "BOOL",
+        "description": "Some bit..."
+      },
+      "g": {
+        "parameterNo": 119,
+        "group": 0,
+        "address": 22,
+        "bit": 8,
+        "bitSize": 4,
+        "type": "UINT",
+        "description": "Some 4-bit number..."
+      }
+    }
+  }
+}

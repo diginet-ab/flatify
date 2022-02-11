@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\build\\cli.js",
-            "args":["./build"],
+            "args":[],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

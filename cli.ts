@@ -10,38 +10,48 @@ type Options = {
     extension: string
     json: string
     debug: boolean
+    target: string
     test: boolean
 }
 
-const getAllFiles = async (sourceDirPath: string, destDirPath: string = '', aArrayOfFiles: string[] = []) => {
-    const files = await fsp.readdir(sourceDirPath)
+type FileMap = {
+    sourceFilePath: string
+    filePath: string
+}
+
+const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', excludePath: string, aArrayOfFiles: FileMap[] = []) => {
     let arrayOfFiles = aArrayOfFiles || []
-    for (const file of files) {
-        if ((await fsp.stat(sourceDirPath + "/" + file)).isDirectory()) {
-            arrayOfFiles = await getAllFiles(sourceDirPath + "/" + file, (destDirPath ? destDirPath + "/" : '') + file, arrayOfFiles)
-        } else {
-            arrayOfFiles.push((destDirPath ? destDirPath + "/" : '') + file)
+    for (const sourceDirPath of sourceDirPaths) {
+        if (sourceDirPath !== excludePath) {
+            const files = await fsp.readdir(sourceDirPath)
+            for (const file of files) {
+                if ((await fsp.stat(sourceDirPath + "/" + file)).isDirectory()) {
+                    arrayOfFiles = await getAllFiles([sourceDirPath + "/" + file], (destDirPath ? destDirPath + "/" : '') + file, excludePath, arrayOfFiles)
+                } else {
+                    arrayOfFiles.push({ sourceFilePath: sourceDirPath + "/" + file, filePath: (destDirPath ? destDirPath + "/" : '') + file })
+                }
+            }
         }
     }
     return arrayOfFiles
 }
 
-export const copyWebBuildFilesToFlatFolder = async (sourcePath: string, destPath: string, options: Options) => {
+export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destPath: string, options: Options) => {
     await fsp.mkdir(destPath, { recursive: true })
-    const files = await getAllFiles(sourcePath, '')
+    const files = await getAllFiles(sourcePaths, '', destPath)
     const fileMap: { publicName: string, localName: string }[] = []
-    for (const [index, publicName] of files.entries()) {
+    for (const [index, map] of files.entries()) {
         const localName = `${options.base}${index.toString()}${options.extension}`
-        const destName = `${destPath}\\${localName}`
+        const destName = `${destPath}/${localName}`
         if (options.debug || options.test) {
             if (!options.test)
-                console.log(`Copying ${publicName} to ${destName}`)
+                console.log(`Copying ${map.sourceFilePath} to ${destName}`)
             else
-                console.log(`Would copy ${publicName} to ${destName}`)
+                console.log(`Would copy ${map} to ${destName}`)
         }
         if (!options.test)
-            await fsp.copyFile(sourcePath + '/' + publicName, destName)
-        fileMap.push({ publicName, localName })
+            await fsp.copyFile(map.sourceFilePath, destName)
+        fileMap.push({ publicName: map.filePath, localName })
     }
     const modifiedTime = new Date()
     const modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString()
@@ -60,16 +70,16 @@ const getVersion = async () => {
     let packageJson: { version?: string } = {}
     let json = ''
     try {
-        json = fs.readFileSync(__dirname + '/package.json', { encoding: 'utf-8'})
+        json = fs.readFileSync(__dirname + '/package.json', { encoding: 'utf-8' })
     } catch {
-        json = fs.readFileSync(__dirname + '/../package.json', { encoding: 'utf-8'})
+        json = fs.readFileSync(__dirname + '/../package.json', { encoding: 'utf-8' })
     }
     packageJson = JSON.parse(json)
     return packageJson.version
 }
 
 const main = async () => {
-    const defaultSource = './'
+    const defaultSource = ['.']
     const defaultTarget = './output'
 
     let version = ''
@@ -87,11 +97,11 @@ const main = async () => {
         .option('-e, --extension <ext>', 'Flat file extension', '.bin')
         .option('-j, --json <name>', 'JSON file name', 'files.json')
         .option('-d, --debug', 'Debug info')
-        .option('-t, --test', 'Display files but do not copy')
-        .argument('[source]', 'source folder', defaultSource)
-        .argument('[target]', 'target folder', defaultTarget)
-        .action(async (source, target, options: Options, command) => {
-            await copyWebBuildFilesToFlatFolder(source, target, options)
+        .option('-t, --target', 'Target folder', './output')
+        .option('-T, --test', 'Display files but do not copy')
+        .argument('[source...]', 'source folders', defaultSource)
+        .action(async (source, options: Options, command) => {
+            await copyWebBuildFilesToFlatFolder(source, options.target, options)
         })
 
     program.parse()
