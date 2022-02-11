@@ -44,7 +44,10 @@ const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', e
 }
 
 export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destPath: string, options: Options) => {
-    await fsp.mkdir(destPath, { recursive: true })
+    if (!options.no)
+        await fsp.mkdir(destPath, { recursive: true })
+    else
+        console.log(`Would create folder ${destPath}`)
     const files = await getAllFiles(sourcePaths, '', destPath)
     const fileMap: { publicName: string, localName: string }[] = []
     for (const [index, map] of files.entries()) {
