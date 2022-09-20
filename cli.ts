@@ -124,7 +124,7 @@ const main = async () => {
         .version(version)
         .option('-b, --base <name>', 'Flat file base name', 'file')
         .option('-e, --extension <ext>', 'Flat file extension', '.bin')
-        .option('-j, --json <name>', 'JSON file name', 'files.json')
+        .option('-j, --json <name>', 'JSON file name', 'files.jso')
         .option('-d, --debug', 'Debug info')
         .option('-t, --target <target>', 'Target folder', './output')
         .option('-n, --no', 'Display files but do not copy')
