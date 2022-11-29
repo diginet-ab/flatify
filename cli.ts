@@ -64,7 +64,7 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destP
     const files = await getAllFiles(sourcePaths, '', destPath)
     const fileMap: { publicName: string, localName: string }[] = []
     for (const [index, map] of files.entries()) {
-        const localName = `${options.base}${index.toString()}${options.extension}`
+        const localName = `${options.base}${index.toString().padStart(4, '0')}${options.extension}`
         const destName = `${destPath}/${localName}`
         if (options.debug || options.no) {
             if (!options.no)
