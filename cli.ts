@@ -13,14 +13,18 @@ type Options = {
     debug: boolean
     target: string
     no: boolean
+    public: boolean
+    local: string[]
+    web: string[]
 }
 
 type FileMap = {
     sourceFilePath: string
     filePath: string
+    publicFile: boolean
 }
 
-const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', excludePath: string, aArrayOfFiles: FileMap[] = []) => {
+const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', excludePath: string, aArrayOfFiles: FileMap[] = [], options: Options) => {
     let arrayOfFiles = aArrayOfFiles || []
     for (const sourceDirPath of sourceDirPaths) {
         let sourcePath = sourceDirPath
@@ -31,7 +35,12 @@ const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', e
             destPath += (destPath ? '/' : '') + parts[1]
         }
         if (sourcePath !== excludePath) {
-            let files: { source: string, dest: string }[] = []
+            let files: { source: string, dest: string, publicFile: boolean }[] = []
+            let publicFile = options.public
+            if (options.web.includes(sourceDirPath))
+                publicFile = true
+            if (options.local.includes(sourceDirPath))
+                publicFile = false
             const stat = await fsp.stat(sourcePath)
             if (stat.isFile()) {
                 let dest = ''
@@ -39,16 +48,16 @@ const getAllFiles = async (sourceDirPaths: string[], destDirPath: string = '', e
                     dest = destPath
                 else
                     dest = (destPath ? destPath + "/" : '') + path.basename(sourcePath)
-                files.push({ source: sourcePath, dest })
+                files.push({ source: sourcePath, dest, publicFile })
             } else {
                 const sources = await fsp.readdir(sourcePath)
-                files = sources.map(f => ({ source: sourcePath + "/" + f, dest: (destPath ? destPath + "/" : '') + f } ))
+                files = sources.map(f => ({ source: sourcePath + "/" + f, dest: (destPath ? destPath + "/" : '') + f, publicFile } ))
             }
             for (const file of files) {
                 if (!(await fsp.stat(file.source)).isFile()) {
-                    arrayOfFiles = await getAllFiles([file.source], file.dest, excludePath, arrayOfFiles)
+                    arrayOfFiles = await getAllFiles([file.source], file.dest, excludePath, arrayOfFiles, options)
                 } else {
-                    arrayOfFiles.push({ sourceFilePath: file.source, filePath: file.dest })
+                    arrayOfFiles.push({ sourceFilePath: file.source, filePath: file.dest, publicFile: file.publicFile })
                 }
             }
         }
@@ -61,8 +70,8 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destP
         await fsp.mkdir(destPath, { recursive: true })
     else
         console.log(`Would create folder ${destPath}`)
-    const files = await getAllFiles(sourcePaths, '', destPath)
-    const fileMap: { publicName: string, localName: string }[] = []
+    const files = await getAllFiles([...sourcePaths, ...options.web, ...options.local], '', destPath, [], options)
+    const fileMap: { publicName: string, localName: string, public: boolean }[] = []
     for (const [index, map] of files.entries()) {
         const localName = `${options.base}${index.toString().padStart(4, '0')}${options.extension}`
         const destName = `${destPath}/${localName}`
@@ -74,7 +83,7 @@ export const copyWebBuildFilesToFlatFolder = async (sourcePaths: string[], destP
         }
         if (!options.no)
             await fsp.copyFile(map.sourceFilePath, destName)
-        fileMap.push({ publicName: map.filePath, localName })
+        fileMap.push({ publicName: map.filePath, localName, public: map.publicFile })
     }
     const modifiedTime = new Date()
     const modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString()
@@ -128,8 +137,12 @@ const main = async () => {
         .option('-d, --debug', 'Debug info')
         .option('-t, --target <target>', 'Target folder', './output')
         .option('-n, --no', 'Display files but do not copy')
+        .option('-p, --public', 'Set local/web default to public', true)
+        .option('-l, --local <name...>', 'Local file, no web server access allowed')
+        .option('-w, --web <name...>', 'Web file, web server access allowed')
         .argument('[source...]', 'Source folders with optional target folder separated by colon (ex: ./build:www)', defaultSource)
         .action(async (source, options: Options, command) => {
+            options.target = options.target.trim()
             await copyWebBuildFilesToFlatFolder(source.map((s: string) => s.replaceAll('\\', '/')), options.target.replaceAll('\\', '/'), options)
         })
 

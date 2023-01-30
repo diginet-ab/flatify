@@ -1,0 +1,175 @@
+{
+  "fileMap": [
+    {
+      "publicName": "cli/cli.js",
+      "localName": "file0000.bin",
+      "public": true
+    },
+    {
+      "publicName": "cli/cli.js.map",
+      "localName": "file0001.bin",
+      "public": true
+    },
+    {
+      "publicName": "asset-manifest.json",
+      "localName": "file0002.bin",
+      "public": true
+    },
+    {
+      "publicName": "favicon.ico",
+      "localName": "file0003.bin",
+      "public": true
+    },
+    {
+      "publicName": "index.html",
+      "localName": "file0004.bin",
+      "public": true
+    },
+    {
+      "publicName": "logo192.png",
+      "localName": "file0005.bin",
+      "public": true
+    },
+    {
+      "publicName": "logo512.png",
+      "localName": "file0006.bin",
+      "public": true
+    },
+    {
+      "publicName": "manifest.json",
+      "localName": "file0007.bin",
+      "public": true
+    },
+    {
+      "publicName": "robots.txt",
+      "localName": "file0008.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/css/main.e6c13ad2.css",
+      "localName": "file0009.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/css/main.e6c13ad2.css.map",
+      "localName": "file0010.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/js/787.af0176e2.chunk.js",
+      "localName": "file0011.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/js/787.af0176e2.chunk.js.map",
+      "localName": "file0012.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/js/main.7d1db9a8.js",
+      "localName": "file0013.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/js/main.7d1db9a8.js.LICENSE.txt",
+      "localName": "file0014.bin",
+      "public": true
+    },
+    {
+      "publicName": "static/js/main.7d1db9a8.js.map",
+      "localName": "file0015.bin",
+      "public": true
+    },
+    {
+      "publicName": "siox-api.json",
+      "localName": "file0016.bin",
+      "public": true
+    },
+    {
+      "publicName": "test.json",
+      "localName": "file0017.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/favicon-16x16.png",
+      "localName": "file0018.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/favicon-32x32.png",
+      "localName": "file0019.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/index.html",
+      "localName": "file0020.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/oauth2-redirect.html",
+      "localName": "file0021.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-bundle.js",
+      "localName": "file0022.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-bundle.js.map",
+      "localName": "file0023.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-es-bundle-core.js",
+      "localName": "file0024.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-es-bundle-core.js.map",
+      "localName": "file0025.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-es-bundle.js",
+      "localName": "file0026.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-es-bundle.js.map",
+      "localName": "file0027.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-standalone-preset.js",
+      "localName": "file0028.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui-standalone-preset.js.map",
+      "localName": "file0029.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui.css",
+      "localName": "file0030.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui.css.map",
+      "localName": "file0031.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui.js",
+      "localName": "file0032.bin",
+      "public": false
+    },
+    {
+      "publicName": "swagger/swagger-ui.js.map",
+      "localName": "file0033.bin",
+      "public": false
+    }
+  ],
+  "date": "Mon Jan 30 2023 13:40:58 GMT+0100 (centraleuropeisk normaltid)"
+}

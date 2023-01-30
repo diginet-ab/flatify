@@ -1,0 +1,355 @@
+#!/usr/bin/env node
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.copyWebBuildFilesToFlatFolder = void 0;
+var fs_1 = __importDefault(require("fs"));
+var promises_1 = __importDefault(require("fs/promises"));
+var commander_1 = require("commander");
+require("ts-replace-all");
+var posix_1 = __importDefault(require("path/posix"));
+var getAllFiles = function (sourceDirPaths, destDirPath, excludePath, aArrayOfFiles, options) {
+    if (destDirPath === void 0) { destDirPath = ''; }
+    if (aArrayOfFiles === void 0) { aArrayOfFiles = []; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var arrayOfFiles, _loop_1, sourceDirPaths_1, sourceDirPaths_1_1, sourceDirPath, e_1_1;
+        var e_1, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    arrayOfFiles = aArrayOfFiles || [];
+                    _loop_1 = function (sourceDirPath) {
+                        var sourcePath, destPath, parts, files, publicFile_1, stat, dest, sources, files_1, files_1_1, file, e_2_1;
+                        var e_2, _c;
+                        return __generator(this, function (_d) {
+                            switch (_d.label) {
+                                case 0:
+                                    sourcePath = sourceDirPath;
+                                    destPath = destDirPath;
+                                    if (sourceDirPath.indexOf(':') >= 0) {
+                                        parts = sourceDirPath.split(':');
+                                        sourcePath = parts[0];
+                                        destPath += (destPath ? '/' : '') + parts[1];
+                                    }
+                                    if (!(sourcePath !== excludePath)) return [3 /*break*/, 13];
+                                    files = [];
+                                    publicFile_1 = options.public;
+                                    if (options.web.includes(sourceDirPath))
+                                        publicFile_1 = true;
+                                    if (options.local.includes(sourceDirPath))
+                                        publicFile_1 = false;
+                                    return [4 /*yield*/, promises_1.default.stat(sourcePath)];
+                                case 1:
+                                    stat = _d.sent();
+                                    if (!stat.isFile()) return [3 /*break*/, 2];
+                                    dest = '';
+                                    if (destPath && destPath.indexOf('.') >= 0)
+                                        dest = destPath;
+                                    else
+                                        dest = (destPath ? destPath + "/" : '') + posix_1.default.basename(sourcePath);
+                                    files.push({ source: sourcePath, dest: dest, publicFile: publicFile_1 });
+                                    return [3 /*break*/, 4];
+                                case 2: return [4 /*yield*/, promises_1.default.readdir(sourcePath)];
+                                case 3:
+                                    sources = _d.sent();
+                                    files = sources.map(function (f) { return ({ source: sourcePath + "/" + f, dest: (destPath ? destPath + "/" : '') + f, publicFile: publicFile_1 }); });
+                                    _d.label = 4;
+                                case 4:
+                                    _d.trys.push([4, 11, 12, 13]);
+                                    files_1 = (e_2 = void 0, __values(files)), files_1_1 = files_1.next();
+                                    _d.label = 5;
+                                case 5:
+                                    if (!!files_1_1.done) return [3 /*break*/, 10];
+                                    file = files_1_1.value;
+                                    return [4 /*yield*/, promises_1.default.stat(file.source)];
+                                case 6:
+                                    if (!!(_d.sent()).isFile()) return [3 /*break*/, 8];
+                                    return [4 /*yield*/, getAllFiles([file.source], file.dest, excludePath, arrayOfFiles, options)];
+                                case 7:
+                                    arrayOfFiles = _d.sent();
+                                    return [3 /*break*/, 9];
+                                case 8:
+                                    arrayOfFiles.push({ sourceFilePath: file.source, filePath: file.dest, publicFile: file.publicFile });
+                                    _d.label = 9;
+                                case 9:
+                                    files_1_1 = files_1.next();
+                                    return [3 /*break*/, 5];
+                                case 10: return [3 /*break*/, 13];
+                                case 11:
+                                    e_2_1 = _d.sent();
+                                    e_2 = { error: e_2_1 };
+                                    return [3 /*break*/, 13];
+                                case 12:
+                                    try {
+                                        if (files_1_1 && !files_1_1.done && (_c = files_1.return)) _c.call(files_1);
+                                    }
+                                    finally { if (e_2) throw e_2.error; }
+                                    return [7 /*endfinally*/];
+                                case 13: return [2 /*return*/];
+                            }
+                        });
+                    };
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 6, 7, 8]);
+                    sourceDirPaths_1 = __values(sourceDirPaths), sourceDirPaths_1_1 = sourceDirPaths_1.next();
+                    _b.label = 2;
+                case 2:
+                    if (!!sourceDirPaths_1_1.done) return [3 /*break*/, 5];
+                    sourceDirPath = sourceDirPaths_1_1.value;
+                    return [5 /*yield**/, _loop_1(sourceDirPath)];
+                case 3:
+                    _b.sent();
+                    _b.label = 4;
+                case 4:
+                    sourceDirPaths_1_1 = sourceDirPaths_1.next();
+                    return [3 /*break*/, 2];
+                case 5: return [3 /*break*/, 8];
+                case 6:
+                    e_1_1 = _b.sent();
+                    e_1 = { error: e_1_1 };
+                    return [3 /*break*/, 8];
+                case 7:
+                    try {
+                        if (sourceDirPaths_1_1 && !sourceDirPaths_1_1.done && (_a = sourceDirPaths_1.return)) _a.call(sourceDirPaths_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                    return [7 /*endfinally*/];
+                case 8: return [2 /*return*/, arrayOfFiles];
+            }
+        });
+    });
+};
+var copyWebBuildFilesToFlatFolder = function (sourcePaths, destPath, options) { return __awaiter(void 0, void 0, void 0, function () {
+    var files, fileMap, _a, _b, _c, index, map, localName, destName, e_3_1, modifiedTime, modifiedTimeString, jsonFile, jsonText;
+    var e_3, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                if (!!options.no) return [3 /*break*/, 2];
+                return [4 /*yield*/, promises_1.default.mkdir(destPath, { recursive: true })];
+            case 1:
+                _e.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                console.log("Would create folder ".concat(destPath));
+                _e.label = 3;
+            case 3: return [4 /*yield*/, getAllFiles(__spreadArray(__spreadArray(__spreadArray([], __read(sourcePaths), false), __read(options.web), false), __read(options.local), false), '', destPath, [], options)];
+            case 4:
+                files = _e.sent();
+                fileMap = [];
+                _e.label = 5;
+            case 5:
+                _e.trys.push([5, 11, 12, 13]);
+                _a = __values(files.entries()), _b = _a.next();
+                _e.label = 6;
+            case 6:
+                if (!!_b.done) return [3 /*break*/, 10];
+                _c = __read(_b.value, 2), index = _c[0], map = _c[1];
+                localName = "".concat(options.base).concat(index.toString().padStart(4, '0')).concat(options.extension);
+                destName = "".concat(destPath, "/").concat(localName);
+                if (options.debug || options.no) {
+                    if (!options.no)
+                        console.log("Copying ".concat(map.sourceFilePath, " to ").concat(destName, " as ").concat(map.filePath));
+                    else
+                        console.log("Would copy ".concat(map.sourceFilePath, " to ").concat(destName, " as ").concat(map.filePath));
+                }
+                if (!!options.no) return [3 /*break*/, 8];
+                return [4 /*yield*/, promises_1.default.copyFile(map.sourceFilePath, destName)];
+            case 7:
+                _e.sent();
+                _e.label = 8;
+            case 8:
+                fileMap.push({ publicName: map.filePath, localName: localName, public: map.publicFile });
+                _e.label = 9;
+            case 9:
+                _b = _a.next();
+                return [3 /*break*/, 6];
+            case 10: return [3 /*break*/, 13];
+            case 11:
+                e_3_1 = _e.sent();
+                e_3 = { error: e_3_1 };
+                return [3 /*break*/, 13];
+            case 12:
+                try {
+                    if (_b && !_b.done && (_d = _a.return)) _d.call(_a);
+                }
+                finally { if (e_3) throw e_3.error; }
+                return [7 /*endfinally*/];
+            case 13:
+                modifiedTime = new Date();
+                modifiedTimeString = modifiedTime.toDateString() + ' ' + modifiedTime.toTimeString();
+                jsonFile = destPath + "\\".concat(options.json);
+                jsonText = JSON.stringify({ fileMap: fileMap, date: modifiedTimeString }, undefined, 2);
+                if (!!options.no) return [3 /*break*/, 15];
+                return [4 /*yield*/, promises_1.default.writeFile(jsonFile, jsonText)];
+            case 14:
+                _e.sent();
+                return [3 /*break*/, 16];
+            case 15:
+                console.log("Would write ".concat(jsonFile, ": "), jsonText);
+                _e.label = 16;
+            case 16: return [2 /*return*/];
+        }
+    });
+}); };
+exports.copyWebBuildFilesToFlatFolder = copyWebBuildFilesToFlatFolder;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+var sprintf = function (strings) {
+    var indices = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        indices[_i - 1] = arguments[_i];
+    }
+    return function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        return strings.reduce(function (total, part, index) {
+            return total + part + (values[indices[index]] || '');
+        }, '');
+    };
+};
+var getVersion = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var packageJson, json;
+    return __generator(this, function (_a) {
+        packageJson = {};
+        json = '';
+        try {
+            json = fs_1.default.readFileSync(__dirname + '/package.json', { encoding: 'utf-8' });
+        }
+        catch (_b) {
+            json = fs_1.default.readFileSync(__dirname + '/../package.json', { encoding: 'utf-8' });
+        }
+        packageJson = JSON.parse(json);
+        return [2 /*return*/, packageJson.version];
+    });
+}); };
+var main = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var defaultSource, defaultTarget, version, ver, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                defaultSource = ['.'];
+                defaultTarget = './output';
+                version = '';
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, getVersion()];
+            case 2:
+                ver = _b.sent();
+                if (ver)
+                    version = ver;
+                return [3 /*break*/, 4];
+            case 3:
+                _a = _b.sent();
+                return [3 /*break*/, 4];
+            case 4:
+                commander_1.program
+                    .name('flatify')
+                    .description('CLI to flatten a source folder with hierarchical folder structure to a flat list of numbered files in a target folder. A JSON file is also output containing an array of the original names.')
+                    .version(version)
+                    .option('-b, --base <name>', 'Flat file base name', 'file')
+                    .option('-e, --extension <ext>', 'Flat file extension', '.bin')
+                    .option('-j, --json <name>', 'JSON file name', 'files.jso')
+                    .option('-d, --debug', 'Debug info')
+                    .option('-t, --target <target>', 'Target folder', './output')
+                    .option('-n, --no', 'Display files but do not copy')
+                    .option('-p, --public', 'Set local/web default to public', true)
+                    .option('-l, --local <name...>', 'Local file, no web server access allowed')
+                    .option('-w, --web <name...>', 'Web file, web server access allowed')
+                    .argument('[source...]', 'Source folders with optional target folder separated by colon (ex: ./build:www)', defaultSource)
+                    .action(function (source, options, command) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                options.target = options.target.trim();
+                                return [4 /*yield*/, (0, exports.copyWebBuildFilesToFlatFolder)(source.map(function (s) { return s.replaceAll('\\', '/'); }), options.target.replaceAll('\\', '/'), options)];
+                            case 1:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+                commander_1.program.parse();
+                return [2 /*return*/];
+        }
+    });
+}); };
+main();
+//# sourceMappingURL=cli.js.map

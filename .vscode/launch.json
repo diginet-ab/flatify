@@ -5,17 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\build\\cli.js",
-            "args":["--debug", "-t ./flash", "-n", "./build:cli", "../ProfCon/siox-web/build", "../ProfCon/swagger-html:swagger", "../ProfCon\\siox-http-api-typescript/build/swagger.json:siox-api.json"],
+            "args":["--debug", "-t ./flash", "./build:cli", "-l", "./test/test.json", "-w", "../ProfCon/siox-web/build", "-l", "../ProfCon/swagger-html:swagger", "-w", "../ProfCon\\siox-http-api-typescript/build/swagger.json:siox-api.json"],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
-            ]
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
